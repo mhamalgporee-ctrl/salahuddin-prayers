@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الطقس ومواقيت الصلاة في صلاح الدين ونواحيها</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1b2a4a">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.92) 100%),
+                        url('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        .app-card {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 22px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
+        .header-title {
+            font-size: 1.35rem;
+            font-weight: bold;
+            color: #f1c40f;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.4;
+        }
+        .clock-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 18px;
+            padding: 15px;
+            margin-bottom: 18px;
+        }
+        .clock-label {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin-bottom: 4px;
+        }
+        .clock-time {
+            font-size: 2.1rem;
+            font-weight: bold;
+            color: #38bdf8;
+            direction: ltr;
+            letter-spacing: 1px;
+        }
+        .designer-tag {
+            font-size: 0.9rem;
+            color: #f59e0b;
+            margin-top: 8px;
+            font-weight: 600;
+            border-top: 1px dashed rgba(245, 158, 11, 0.3);
+            padding-top: 8px;
+        }
+        .selector-box {
+            margin-bottom: 18px;
+            text-align: right;
+        }
+        .selector-box label {
+            display: block;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 6px;
+        }
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            background: #1e293b;
+            color: #ffffff;
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+        }
+        .weather-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .weather-title {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+        }
+        .weather-info {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+        .prayers-header {
+            font-size: 1rem;
+            color: #f1c40f;
+            text-align: right;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(241, 196, 15, 0.2);
+            padding-bottom: 6px;
+        }
+        .prayers-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .prayer-item {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+        }
+        .prayer-name {
+            color: #e2e8f0;
+        }
+        .prayer-time {
+            font-weight: bold;
+            color: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-card">
+        <!-- عنوان التطبيق -->
+        <div class="header-title">الطقس ومواقيت الصلاة<br>في صلاح الدين ونواحيها</div>
+
+        <!-- الساعة والحقوق -->
+        <div class="clock-box">
+            <div class="clock-label">توقيت بغداد المحلي</div>
+            <div class="clock-time" id="clock">--:--:-- --</div>
+            <div class="designer-tag">تصميم محمد علي احمد الحطاب الجبوري</div>
+        </div>
+
+        <!-- اختيار القضاء -->
+        <div class="selector-box">
+            <label for="districtSelect">اختر القضاء / الناحية:</label>
+            <select id="districtSelect" onchange="updateData()">
+                <option value="Tikrit,34.60,43.68">تكريت (المركز)</option>
+                <option value="Shirqat,35.48,43.25">الشرقاط</option>
+                <option value="Samarra,34.20,43.87">سامراء</option>
+                <option value="Baiji,34.93,43.49">بيجي</option>
+                <option value="Balad,34.01,44.14">بلد</option>
+                <option value="Dujail,33.84,44.23">الدجيل</option>
+                <option value="TuzKhurmatu,34.88,44.63">طوزخورماتو</option>
+                <option value="AlDaur,34.45,43.79">الدور</option>
+            </select>
+        </div>
+
+        <!-- حالة الطقس -->
+        <div class="weather-box">
+            <span class="weather-title">الحالة الجوية:</span>
+            <span class="weather-info" id="weather">جاري التحميل...</span>
+        </div>
+
+        <!-- مواقيت الصلاة (الوقف السني) -->
+        <div class="prayers-header">مواقيت الصلاة (إمساكية الوقف السني)</div>
+        <div class="prayers-list">
+            <div class="prayer-item"><span class="prayer-name">الفجر</span><span class="prayer-time" id="fajr">--:--</span></div>
+            <div class="prayer-item"><span class="prayer-name">الشروق</span><span class="prayer-time" id="sunrise">--:--</span></div>
+            <div class="prayer-item"><span class="prayer-name">الظهر</span><span class="prayer-time" id="dhuhr">--:--</span></div>
+            <div class="prayer-item"><span class="prayer-name">العصر</span><span class="prayer-time" id="asr">--:--</span></div>
+            <div class="prayer-item"><span class="prayer-name">المغرب</span><span class="prayer-time" id="maghrib">--:--</span></div>
+            <div class="prayer-item"><span class="prayer-name">العشاء</span><span class="prayer-time" id="isha">--:--</span></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. ساعة بتوقيت بغداد بنظام 12 ساعة
+        function updateBaghdadClock() {
+            const now = new Date();
+            const options = { timeZone: 'Asia/Baghdad', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            const timeStr = now.toLocaleTimeString('en-US', options);
+            
+            let [time, modifier] = timeStr.split(' ');
+            let arModifier = modifier === 'AM' ? 'ص' : 'م';
+            document.getElementById('clock').textContent = `${time} ${arModifier}`;
+        }
+        setInterval(updateBaghdadClock, 1000);
+        updateBaghdadClock();
+
+        // 2. تحويل أوقات الصلاة لنظام 12 ساعة (ص/م)
+        function format12H(time24) {
+            if (!time24) return '--:--';
+            let cleanTime = time24.split(' ')[0];
+            let [h, m] = cleanTime.split(':');
+            let hours = parseInt(h, 10);
+            let ampm = hours >= 12 ? 'م' : 'ص';
+            hours = hours % 12 || 12;
+            return `${String(hours).padStart(2, '0')}:${m} ${ampm}`;
+        }
+
+        // 3. جلب البيانات بناءً على القضاء المحدد
+        async function updateData() {
+            const select = document.getElementById('districtSelect');
+            const [cityName, lat, lon] = select.value.split(',');
+
+            // جلب مواقيت الصلاة (الوقف السني - Method 5)
+            try {
+                const res = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=5`);
+                const data = await res.json();
+                const t = data.data.timings;
+
+                document.getElementById('fajr').textContent = format12H(t.Fajr);
+                document.getElementById('sunrise').textContent = format12H(t.Sunrise);
+                document.getElementById('dhuhr').textContent = format12H(t.Dhuhr);
+                document.getElementById('asr').textContent = format12H(t.Asr);
+                document.getElementById('maghrib').textContent = format12H(t.Maghrib);
+                document.getElementById('isha').textContent = format12H(t.Isha);
+            } catch (e) {
+                console.error("خطأ في جلب المواقيت", e);
+            }
+
+            // جلب الطقس
+            try {
+                const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                const dataW = await resW.json();
+                const temp = Math.round(dataW.current_weather.temperature);
+                document.getElementById('weather').textContent = `${temp}° مئوية`;
+            } catch (e) {
+                document.getElementById('weather').textContent = 'غير متوفر';
+            }
+        }
+
+        updateData();
+
+        // تسجيل Service Worker لـ PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js');
+            });
+        }
+    </script>
+</body>
+</html>
